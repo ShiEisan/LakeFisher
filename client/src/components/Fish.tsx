@@ -4,22 +4,50 @@ interface FishProps {
   id: string;
   x: number;
   y: number;
+  direction: number; // -1 for left, 1 for right
+  speed: number;
   type?: 'small' | 'medium' | 'large';
   isCaught?: boolean;
   onCatch?: (id: string) => void;
+  onPositionUpdate?: (id: string, newX: number, newY: number) => void;
 }
 
-export default function Fish({ id, x, y, type = 'small', isCaught = false, onCatch }: FishProps) {
+export default function Fish({ 
+  id, 
+  x, 
+  y, 
+  direction, 
+  speed, 
+  type = 'small', 
+  isCaught = false, 
+  onCatch, 
+  onPositionUpdate 
+}: FishProps) {
+  const [currentX, setCurrentX] = useState(x);
+  const [currentY, setCurrentY] = useState(y);
   const [isVisible, setIsVisible] = useState(true);
-  const [swimDirection, setSwimDirection] = useState(1);
 
+  // Swimming animation - continuous movement
   useEffect(() => {
+    if (isCaught || !isVisible) return;
+
     const interval = setInterval(() => {
-      setSwimDirection(prev => prev * -1);
-    }, 2000 + Math.random() * 3000);
+      setCurrentX(prevX => {
+        const newX = prevX + (direction * speed);
+        
+        // Small vertical movement for natural swimming
+        setCurrentY(prevY => {
+          const newY = prevY + (Math.sin(Date.now() * 0.005) * 0.5);
+          onPositionUpdate?.(id, newX, newY);
+          return newY;
+        });
+        
+        return newX;
+      });
+    }, 50); // 20 FPS movement
 
     return () => clearInterval(interval);
-  }, []);
+  }, [direction, speed, isCaught, isVisible, id, onPositionUpdate]);
 
   useEffect(() => {
     if (isCaught) {
@@ -46,15 +74,16 @@ export default function Fish({ id, x, y, type = 'small', isCaught = false, onCat
     <div 
       className="absolute cursor-pointer hover:scale-110 transition-transform z-10"
       style={{ 
-        left: x, 
-        top: y,
-        transform: `scaleX(${swimDirection})`
+        left: currentX, 
+        top: currentY,
+        transform: `scaleX(${direction})`,
+        transition: 'transform 0.1s ease-out'
       }}
       onClick={() => onCatch?.(id)}
       data-testid={`fish-${id}`}
     >
       <svg width={size.width} height={size.height} viewBox={`0 0 ${size.width} ${size.height}`}>
-        {/* Fish body */}
+        {/* Fish body with swimming animation */}
         <ellipse 
           cx={size.width * 0.4} 
           cy={size.height * 0.5} 
@@ -64,10 +93,11 @@ export default function Fish({ id, x, y, type = 'small', isCaught = false, onCat
           className="animate-pulse"
         />
         
-        {/* Fish tail */}
+        {/* Fish tail with wiggle animation */}
         <polygon 
           points={`${size.width * 0.1},${size.height * 0.3} ${size.width * 0.1},${size.height * 0.7} 0,${size.height * 0.5}`}
           fill={colors[type]}
+          className="animate-bounce"
         />
         
         {/* Fish eye */}
@@ -84,7 +114,7 @@ export default function Fish({ id, x, y, type = 'small', isCaught = false, onCat
           fill="black"
         />
         
-        {/* Fish fins */}
+        {/* Fish fins with movement */}
         <ellipse 
           cx={size.width * 0.35} 
           cy={size.height * 0.7} 
@@ -92,6 +122,7 @@ export default function Fish({ id, x, y, type = 'small', isCaught = false, onCat
           ry={size.height * 0.15} 
           fill={colors[type]}
           opacity="0.8"
+          className="animate-pulse"
         />
       </svg>
       
@@ -99,6 +130,7 @@ export default function Fish({ id, x, y, type = 'small', isCaught = false, onCat
       <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-accent text-accent-foreground text-xs px-2 py-1 rounded-full opacity-0 hover:opacity-100 transition-opacity">
         +{size.points}
       </div>
+      
     </div>
   );
 }

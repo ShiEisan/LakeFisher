@@ -10,9 +10,9 @@ export default function FishExample() {
   };
 
   const fishData = [
-    { id: 'fish1', x: 50, y: 50, type: 'small' as const },
-    { id: 'fish2', x: 150, y: 80, type: 'medium' as const },
-    { id: 'fish3', x: 250, y: 60, type: 'large' as const },
+    { id: 'fish1', x: 50, y: 50, direction: 1, speed: 1, type: 'small' as const },
+    { id: 'fish2', x: 150, y: 80, direction: -1, speed: 1.5, type: 'medium' as const },
+    { id: 'fish3', x: 250, y: 60, direction: 1, speed: 0.8, type: 'large' as const },
   ];
 
   return (
@@ -23,6 +23,8 @@ export default function FishExample() {
           id={fish.id}
           x={fish.x}
           y={fish.y}
+          direction={fish.direction}
+          speed={fish.speed}
           type={fish.type}
           isCaught={caughtFish.includes(fish.id)}
           onCatch={handleCatch}

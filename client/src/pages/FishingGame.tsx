@@ -10,6 +10,8 @@ interface FishData {
   id: string;
   x: number;
   y: number;
+  direction: number; // -1 for left, 1 for right
+  speed: number;
   type: 'small' | 'medium' | 'large';
   spawnTime: number;
 }
@@ -23,27 +25,39 @@ export default function FishingGame() {
   const [fish, setFish] = useState<FishData[]>([]);
   const [caughtFishIds, setCaughtFishIds] = useState<string[]>([]);
 
-  // Fish spawn system
+  // Fish spawn system - spawn from screen edges
   const spawnFish = useCallback(() => {
     if (gameState !== 'playing') return;
     
     const fishTypes: Array<'small' | 'medium' | 'large'> = ['small', 'small', 'medium', 'large'];
     const randomType = fishTypes[Math.floor(Math.random() * fishTypes.length)];
     
+    // Random direction (-1 for left to right, 1 for right to left)
+    const direction = Math.random() < 0.5 ? -1 : 1;
+    
+    // Speed varies by fish type
+    const speedVariation = {
+      small: 1.5 + Math.random() * 1,
+      medium: 1 + Math.random() * 0.8,
+      large: 0.6 + Math.random() * 0.6
+    };
+    
+    // Use safe defaults for screen dimensions
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const screenHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+    
     const newFish: FishData = {
       id: `fish-${Date.now()}-${Math.random()}`,
-      x: Math.random() * (window.innerWidth - 100) + 50,
-      y: window.innerHeight * 0.6 + Math.random() * 150,
+      // Spawn from appropriate edge based on direction
+      x: direction === 1 ? -50 : screenWidth + 50,
+      y: screenHeight * 0.6 + Math.random() * 150,
+      direction,
+      speed: speedVariation[randomType],
       type: randomType,
       spawnTime: Date.now()
     };
     
     setFish(prev => [...prev, newFish]);
-    
-    // Remove fish after 10 seconds if not caught
-    setTimeout(() => {
-      setFish(prev => prev.filter(f => f.id !== newFish.id));
-    }, 10000);
   }, [gameState]);
 
   // Timer and fish spawning
@@ -83,6 +97,17 @@ export default function FishingGame() {
       }
     }, 2000);
   };
+
+  // Handle fish position updates and boundary removal
+  const handleFishPositionUpdate = useCallback((fishId: string, newX: number, newY: number) => {
+    // Use safe defaults for screen dimensions
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    
+    // Remove fish if they swim off screen boundaries
+    if (newX < -100 || newX > screenWidth + 100) {
+      setFish(prev => prev.filter(f => f.id !== fishId));
+    }
+  }, []);
 
   // Handle fish catch
   const handleFishCatch = (fishId: string) => {
@@ -151,9 +176,12 @@ export default function FishingGame() {
             id={fishData.id}
             x={fishData.x}
             y={fishData.y}
+            direction={fishData.direction}
+            speed={fishData.speed}
             type={fishData.type}
             isCaught={caughtFishIds.includes(fishData.id)}
             onCatch={handleFishCatch}
+            onPositionUpdate={handleFishPositionUpdate}
           />
         ))}
         
