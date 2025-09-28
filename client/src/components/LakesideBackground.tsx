@@ -47,6 +47,55 @@ export default function LakesideBackground({ children }: LakesideBackgroundProps
           <div className="animate-pulse bg-white/10 rounded-full w-16 h-3 absolute top-1/3 left-3/4 delay-1000"></div>
           <div className="animate-pulse bg-white/10 rounded-full w-12 h-2 absolute top-2/3 left-1/2 delay-2000"></div>
         </div>
+        
+        {/* Underwater plants/seaweed */}
+        <div className="absolute bottom-0 left-0 right-0 h-full">
+          <svg viewBox="0 0 1200 200" className="w-full h-full">
+            {/* Water plants */}
+            <g opacity="0.6">
+              {/* Seaweed 1 */}
+              <path d="M100,200 Q105,150 110,100 Q115,50 120,20" 
+                    stroke="hsl(120, 40%, 30%)" strokeWidth="3" fill="none" 
+                    className="animate-pulse" />
+              <path d="M95,200 Q98,160 102,120 Q106,80 108,40" 
+                    stroke="hsl(120, 45%, 25%)" strokeWidth="2" fill="none" 
+                    className="animate-pulse delay-500" />
+              
+              {/* Seaweed 2 */}
+              <path d="M300,200 Q295,150 290,100 Q285,50 280,10" 
+                    stroke="hsl(120, 40%, 30%)" strokeWidth="4" fill="none" 
+                    className="animate-pulse delay-1000" />
+              <path d="M305,200 Q308,160 312,120 Q316,80 318,30" 
+                    stroke="hsl(120, 45%, 25%)" strokeWidth="2" fill="none" 
+                    className="animate-pulse delay-1500" />
+              
+              {/* Seaweed 3 */}
+              <path d="M500,200 Q505,150 510,100 Q515,50 520,15" 
+                    stroke="hsl(120, 40%, 30%)" strokeWidth="3" fill="none" 
+                    className="animate-pulse delay-2000" />
+                    
+              {/* Seaweed 4 */}
+              <path d="M700,200 Q695,150 690,100 Q685,50 680,25" 
+                    stroke="hsl(120, 40%, 30%)" strokeWidth="4" fill="none" 
+                    className="animate-pulse" />
+              <path d="M705,200 Q708,160 712,120 Q716,80 718,45" 
+                    stroke="hsl(120, 45%, 25%)" strokeWidth="2" fill="none" 
+                    className="animate-pulse delay-500" />
+              
+              {/* Seaweed 5 */}
+              <path d="M900,200 Q905,150 910,100 Q915,50 920,20" 
+                    stroke="hsl(120, 40%, 30%)" strokeWidth="3" fill="none" 
+                    className="animate-pulse delay-1000" />
+                    
+              {/* Small water plants */}
+              <circle cx="150" cy="180" r="8" fill="hsl(120, 50%, 35%)" opacity="0.7" className="animate-pulse" />
+              <circle cx="250" cy="190" r="6" fill="hsl(120, 50%, 35%)" opacity="0.7" className="animate-pulse delay-1000" />
+              <circle cx="450" cy="185" r="10" fill="hsl(120, 50%, 35%)" opacity="0.7" className="animate-pulse delay-500" />
+              <circle cx="650" cy="175" r="7" fill="hsl(120, 50%, 35%)" opacity="0.7" className="animate-pulse delay-1500" />
+              <circle cx="850" cy="190" r="9" fill="hsl(120, 50%, 35%)" opacity="0.7" className="animate-pulse delay-2000" />
+            </g>
+          </svg>
+        </div>
       </div>
 
       {/* Flying birds */}
